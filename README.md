@@ -32,6 +32,9 @@ Airflow DAG tasks read songs and events log data from AWS S3. Creates AWS Redshi
 - Airflow task automatically iterated theough each songs file from the songs location to extract songs data and copy into a staging table.
 - Extract users, artists, songs, time and songplays activity data from events and songs staging data after processing and transformation.
 - Write users, time, songs, artists dimention table and songplays fact table and store in the AWS Redshift.
+- Ensure to apply following data quality checks:
+-- The destination tables have more than zero records after processing.
+-- The destination table NOT NULLABLE fields do not have any NULL value.
 - Once data is cleansed, transformed and loaded in Redshift, it is ready to asnwer specific queries for analytics.
 
 
@@ -41,11 +44,11 @@ Here are helpful steps in executing Airflow DAG tasks.
 
 1. From project workspace, start Airflow service/daemon and click 'Access Airflow' to launch Airflow UI.
 2. Create connections for AWS_Credentials and Redshift from the Airflow UI. Go to Admin --> Connections
-3. Go to 'DAGs' in the UI. 
+3. Go to 'DAGs' in the UI. Ensure there are two DAGs listed.
 4. Turn schedule 'on' for **create_etl_schema** DAG and 'Trigger Dag' button. 
 5. Verify all tasks are completely successfully.
 5. Turn schedule 'on' for **etl_with_airflow** DAG and Trigger Dag' button.
-6. Verify all tasks are completed successfully
+6. Verify all tasks are completed successfully.
 
 Note: **create_etl_schema** DAG must run first in the sequence to create ETL schema in Redshift.
 
