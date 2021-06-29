@@ -39,11 +39,9 @@ class StageToRedshiftOperator(BaseOperator):
         
 
     def execute(self, context):
-        #self.log.info('StageToRedshiftOperator not implemented yet')
+        self.log.info(" StageToRedshiftOperator has started COPY command. It may take multiple mins to finish.")
         aws_hook = AwsHook(self.aws_credentials_id)
-        credentials = aws_hook.get_credentials()
-        #self.log.info(f" AWS access key : {credentials.access_key} and secret key : {credentials.secret_key} ")
-        
+        credentials = aws_hook.get_credentials()        
         
         redshift = PostgresHook(postgres_conn_id=self.redshift_conn_id)
         rendered_key = self.s3_key.format(**context)
@@ -59,10 +57,8 @@ class StageToRedshiftOperator(BaseOperator):
                 self.region,
                 self.extra_params
         )
-        
+        self.log.info("COPY command has been initiated now. We will inform once command is finished\
+                        Thanks for your patience")
         redshift.run(formatted_sql)
-
-
-
-
-
+        
+        self.log.info(" COPY command has finished successfully. ")

@@ -21,9 +21,9 @@ class LoadFactOperator(BaseOperator):
 
 
     def execute(self, context):
-        #self.log.info('LoadFactOperator not implemented yet')
+        self.log.info(" LoadFactOperator is initiating SQL command to load facts. It may take multiple seconds to finish.")
         redshift = PostgresHook(postgres_conn_id = self.redshift_conn_id)
-        #formatted_sql = LoadFactOperator.load_fact_sql.format(self.table)
         
         redshift.run(self.sql)
+        self.log.info(" LoadFactOperator has finished loading facts.")
         

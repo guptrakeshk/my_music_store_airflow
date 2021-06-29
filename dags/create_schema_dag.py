@@ -9,9 +9,15 @@ default_args = {
     'owner' : 'rakeshg',
     'start_date' : datetime(2021, 6, 27, 0, 0, 0, 0),
     'end_date' : datetime(2021, 7, 4, 0, 0, 0, 0),
-    'retries' : 2,
+    'depends_on_past': False,
+    'retries' : 3,
+    'retry_delay' : timedelta(minutes=5),
+    'catchup' : False,
+    'email' : ['gupt.rakeshk@gmail.com'],
     'email_on_retry' : False,
-    'retriesdelay' : timedelta(minutes=6)
+
+    
+    
 
 }
 
@@ -19,7 +25,8 @@ dag = DAG (
     'create_etl_schema',
     description = 'Dag to create schema for ETL using Airflow',
     default_args= default_args,
-    max_active_runs= 1
+    max_active_runs= 1,
+    schedule_interval= '@hourly'
 )
 
 start_operator = DummyOperator(task_id = 'Begin_execution', dag=dag)
@@ -56,10 +63,8 @@ create_fact_schema = PostgresOperator(
 
 
 # Create DAG flow
-start_operator >> drop_etl_schema
-drop_etl_schema >> create_staging_schema
-drop_etl_schema >> create_dim_schema
 
-create_dim_schema >> create_fact_schema
-create_fact_schema >> end_operator
+start_operator >> drop_etl_schema >> [create_staging_schema, create_dim_schema]
+
+create_dim_schema >> create_fact_schema >> end_operator
 create_staging_schema >> end_operator
